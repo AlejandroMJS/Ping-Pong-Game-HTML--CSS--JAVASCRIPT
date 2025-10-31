@@ -16,8 +16,7 @@ body {
     position: fixed;
     top: 10px;
     width: 100%;
-    opacity: 0.5;
-    border: 1px solid white;
+    border: 5px solid white;
     z-index: 10;
 }
 
@@ -36,10 +35,11 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    border: 1px solid white;
-    height: 100vh;
+    border: 5px solid red;
+    height: 800px;
     width: 100vw;
     padding: 0 10px;
+    margin-top: 100px;
 }
 
 .ball {
