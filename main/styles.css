@@ -1,0 +1,31 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    background-color: black;
+    height: 500px;
+}
+
+.main-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.ball {
+    background-color: white;
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    margin-top: 225px;
+}
+
+.player{
+    background-color: white;
+    width: 20px;
+    height: 125px;
+    margin-top: 200px;
+}
+
