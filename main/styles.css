@@ -7,25 +7,56 @@
 body{
     background-color: black;
     height: 500px;
+    overflow-y: hidden;
+}
+
+.score-container{
+    display: flex;
+    justify-content: space-evenly;
+    justify-self: center;
+    margin-top: 5px;
+    z-index: 0;
+    border: solid white 1px;
+    position: fixed;
+    opacity: 50%;
+}
+
+.score {
+    color: white;
+    font-size: 40px;
+    display: flex;
+    
+}
+
+.score-container h3{
+    color: white;
+    font-size: 2em;
+    padding: 0 20px 0 20px;
+    align-content: center;
 }
 
 .main-container {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
+    border: solid white 1px;
+    height: 99.9vh;
+    width: 99.9vw;
+    padding: 0 10px 0 10px;
 }
 
 .ball {
     background-color: white;
-    height: 35px;
-    width: 35px;
+    height: 25px;
+    width: 25px;
     border-radius: 50%;
-    margin-top: 225px;
 }
 
 .player{
     background-color: white;
-    width: 20px;
-    height: 125px;
-    margin-top: 200px;
+    width: 10px;
+    height: 110px;
+    overflow-y: unset;    
 }
+
 
