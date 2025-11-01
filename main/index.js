@@ -7,6 +7,7 @@ const container = document.getElementById("main-container")
 
 const velocidad = 10
 const initialBallSpeed = 5
+const maxBallAngleSpeed = 6 // velocidad vertical máxima al rebotar (ángulo máximo)
 
 let pos1_Y = 0
 let pos2_Y = 0
@@ -46,11 +47,25 @@ function resetBall() {
     ballSpeedY = (Math.random() - 0.5) * initialBallSpeed
 }
 
+function checkWinAndReset() {
+    if (scoreP1 === 10 || scoreP2 === 10) {
+        scoreP1 = 0
+        scoreP2 = 0
+        score1.textContent = scoreP1
+        score2.textContent = scoreP2
+        // Aseguramos que los colores vuelvan a blanco al reiniciar
+        score1.style.color = "white"
+        score2.style.color = "white"
+        resetBall()
+    }
+}
+
 function gameLoop() {
     const containerHeight = container.offsetHeight
     const containerWidth = container.offsetWidth
     const playerHeight = player1.offsetHeight
-    const maxPosicionY = containerHeight - playerHeight
+    const maxPosicionY = containerHeight - playerHeight // Límite inferior para las paletas
+    const maxBallY = containerHeight - ball.offsetHeight // Límite inferior para la bola
 
     if (keysPressed.w) pos1_Y -= velocidad
     if (keysPressed.s) pos1_Y += velocidad
@@ -66,51 +81,82 @@ function gameLoop() {
     ballX += ballSpeedX
     ballY += ballSpeedY
 
+    // --- CORRECCIÓN DE COLISIÓN VERTICAL (CLAMPS Y REBOTE) ---
+    // Rebote en el borde superior
+    if (ballY <= 0) {
+        ballY = 0
+        ballSpeedY *= -1
+    }
+    // Rebote en el borde inferior
+    else if (ballY + ball.offsetHeight >= containerHeight) {
+        ballY = containerHeight - ball.offsetHeight
+        ballSpeedY *= -1
+    }
+    // -----------------------------------------------------------
+
     ball.style.left = `${ballX}px`
     ball.style.top = `${ballY}px`
 
-    if (ballY <= 0) {
-    ballSpeedY = -ballSpeedY
-    ballY = 0 // Forzamos la posición justo en el límite superior
-}
-
-// Colisión Inferior
-if ((ballY + ball.offsetHeight) >= containerHeight) {
-    ballSpeedY = -ballSpeedY
-    ballY = containerHeight - ball.offsetHeight // Forzamos la posición justo en el límite inferior
-}
-
+    // Lógica de GOL
     if (ballX <= 0) {
         scoreP2++
         score2.textContent = scoreP2
+        checkWinAndReset()
         resetBall()
     } else if ((ballX + ball.offsetWidth) >= containerWidth) {
         scoreP1++
         score1.textContent = scoreP1
+        checkWinAndReset()
         resetBall()
     }
-    
+
     const ballRect = ball.getBoundingClientRect()
     const p1Rect = player1.getBoundingClientRect()
     const p2Rect = player2.getBoundingClientRect()
-    
-    if (ballSpeedX < 0 && 
-        ballRect.left <= p1Rect.right && 
-        ballRect.right >= p1Rect.left && 
-        ballRect.top <= p1Rect.bottom && 
+
+    // --- COLISIÓN CON JUGADOR 1 (IZQUIERDA) ---
+    if (ballSpeedX < 0 &&
+        ballRect.left <= p1Rect.right &&
+        ballRect.right >= p1Rect.left &&
+        ballRect.top <= p1Rect.bottom &&
         ballRect.bottom >= p1Rect.top) {
-            ballSpeedX = -ballSpeedX
-    }
-    
-    if (ballSpeedX > 0 && 
-        ballRect.right >= p2Rect.left && 
-        ballRect.left <= p2Rect.right && 
-        ballRect.top <= p2Rect.bottom && 
-        ballRect.bottom >= p2Rect.top) {
-            ballSpeedX = -ballSpeedX
+
+        ballSpeedX = Math.abs(ballSpeedX) // rebota hacia la derecha
+
+        // ⚙️ Cálculo del ángulo de rebote
+        const paddleCenter = p1Rect.top + p1Rect.height / 2
+        const ballCenter = ballRect.top + ballRect.height / 2
+        const hitPosition = (ballCenter - paddleCenter) / (p1Rect.height / 2) // (-1 a 1)
+        ballSpeedY = hitPosition * maxBallAngleSpeed
     }
 
-    
+    // --- COLISIÓN CON JUGADOR 2 (DERECHA) ---
+    if (ballSpeedX > 0 &&
+        ballRect.right >= p2Rect.left &&
+        ballRect.left <= p2Rect.right &&
+        ballRect.top <= p2Rect.bottom &&
+        ballRect.bottom >= p2Rect.top) {
+
+        ballSpeedX = -Math.abs(ballSpeedX) // rebota hacia la izquierda
+
+        // ⚙️ Cálculo del ángulo de rebote
+        const paddleCenter = p2Rect.top + p2Rect.height / 2
+        const ballCenter = ballRect.top + ballRect.height / 2
+        const hitPosition = (ballCenter - paddleCenter) / (p2Rect.height / 2) // (-1 a 1)
+        ballSpeedY = hitPosition * maxBallAngleSpeed
+    }
+
+    // Lógica de color del marcador
+    if (scoreP1 < scoreP2) {
+        score1.style.color = "red"
+        score2.style.color = "white"
+    } else if (scoreP2 < scoreP1) {
+        score2.style.color = "red"
+        score1.style.color = "white"
+    } else {
+        score1.style.color = "white"
+        score2.style.color = "white"
+    }
 
     requestAnimationFrame(gameLoop)
 }

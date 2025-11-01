@@ -7,6 +7,9 @@
 body {
     background-color: black;
     overflow: hidden;
+    background: url(./assets/dark\ leaves.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .score-container {
@@ -16,8 +19,6 @@ body {
     position: fixed;
     top: 10px;
     width: 100%;
-    border: 5px solid white;
-    z-index: 10;
 }
 
 .score {
@@ -35,11 +36,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    border: 5px solid red;
+    border: 5px solid white;
     height: 800px;
     width: 100vw;
-    padding: 0 10px;
     margin-top: 100px;
+    overflow: hidden;
+    padding: 0;
+    position: relative;
 }
 
 .ball {
